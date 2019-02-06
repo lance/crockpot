@@ -1,0 +1,23 @@
+{
+  "name": "crockpot",
+  "version": "0.1.0",
+  "description": "Long running actions",
+  "main": "index.js",
+  "scripts": {
+    "lint": "semistandard index.js test/*.js lib/*.js",
+    "test": "nyc tape test/*.js | tap-spec",
+    "pretest": "npm run lint",
+    "prepublish": "npm audit",
+    "release": "standard-version -s"
+  },
+  "keywords": [],
+  "author": "Lance Ball <lball@redhat.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.13.0",
+    "nyc": "^13.2.0",
+    "semistandard": "^13.0.1",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.9.2"
+  }
+}
