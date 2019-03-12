@@ -3,6 +3,14 @@
 const test = require('tape');
 const crockpot = require('..');
 
+const client = new crockpot('http://localhost:8080');
+const endpoints = {
+  leave: 'http://localhost:3000/leave',
+  complete: 'http://localhost:3000/complete',
+  compensate: 'http://localhost:3000/compensate'
+};
+const timeLimit = 60000;
+
 test('module returns a CockPot constructor function', t => {
   t.equal(typeof crockpot, 'function');
   t.equal(crockpot.name, 'CrockPot');
@@ -26,21 +34,56 @@ test('An LRA client has possible states', t => {
   t.end();
 });
 
-test('An LRA client can start an LRA transaction', t => {
-  const client = new crockpot('http://localhost:8080');
-  const endpoints = {
-    leave: 'http://127.0.0.1:3000/leave',
-    complete: 'http://127.0.0.1:3000/complete',
-    compensate: 'http://127.0.0.1:3000/compensate'
-  };
+test('A Participant is returned when an LRA has been started', t => {
+  t.plan(4);
+  client.start('test-crockpot', timeLimit)
+    .then(participant => {
+      t.ok(participant instanceof crockpot.Participant);
+      t.equal(participant.clientId, 'test-crockpot');
+      t.equal(participant.timeLimit, timeLimit);
+      t.ok(participant.id);
+      t.end();
+    })
+    .catch(t.fail);
+});
 
-  client.start(`${Date.now()}`, endpoints, 60000)
-    .then(resp => {
-      client.status(resp)
+test('A client can start an LRA transaction and get its status', t => {
+  t.plan(1);
+  client.start('test-crockpot', timeLimit)
+    .then(participant => {
+      client.status(participant.id)
         .then(resp => {
-          t.equal(resp, 'Active');
+          t.equal(resp.status, 'Active');
           t.end();
         });
     })
-    .catch(t.end);
+    .catch(t.fail);
+});
+
+test('A client can determine if an LRA is active', t => {
+  t.plan(1);
+  client.start('test-crockpot', timeLimit)
+    .then(participant => {
+      client.isActive(participant.id)
+        .then(resp => {
+          t.equal(resp, true);
+          t.end();
+        });
+    });
+});
+
+test('A client can cancel an active LRA', t => {
+  t.plan(2);
+  client.start('test-crockpot', timeLimit)
+    .then(participant => {
+      client.cancel(participant.id)
+        .then(resp => {
+          t.equal(resp, 'Cancelled');
+          client.isActive(participant.id)
+            .then(resp => {
+              t.equal(resp, false);
+              t.end();
+            });
+        });
+    });
 });
