@@ -25,3 +25,22 @@ test('An LRA client has possible states', t => {
   t.equal(crockpot.states.FAILED_TO_CLOSE, 'failed to close');
   t.end();
 });
+
+test('An LRA client can start an LRA transaction', t => {
+  const client = new crockpot('http://localhost:8080');
+  const endpoints = {
+    leave: 'http://127.0.0.1:3000/leave',
+    complete: 'http://127.0.0.1:3000/complete',
+    compensate: 'http://127.0.0.1:3000/compensate'
+  };
+
+  client.start(`${Date.now()}`, endpoints, 60000)
+    .then(resp => {
+      client.status(resp)
+        .then(resp => {
+          t.equal(resp, 'Active');
+          t.end();
+        });
+    })
+    .catch(t.end);
+});

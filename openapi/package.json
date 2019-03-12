@@ -1,0 +1,24 @@
+{
+  "name": "",
+  "author": "Microsoft Corporation",
+  "description": "MicroprofileLra Library with typescript type definitions for node",
+  "version": "0.0.1",
+  "dependencies": {
+    "ms-rest": "^2.3.3"
+  },
+  "keywords": [
+    "node",
+    "azure"
+  ],
+  "license": "MIT",
+  "main": "./lib/microprofileLra.js",
+  "types": "./lib/microprofileLra.d.ts",
+  "homepage": "https://github.com/azure/azure-sdk-for-node",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azure/azure-sdk-for-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/azure/azure-sdk-for-node/issues"
+  }
+}

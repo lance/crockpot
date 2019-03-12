@@ -1,6 +1,6 @@
 'use strict';
 
-const axios = require('axios');
+const { MicroprofileLra } = require('./openapi');
 
 const STATES = {
   ACTIVE: 'active',
@@ -15,23 +15,45 @@ const STATES = {
 class CrockPot {
   constructor (lraCoordinatorUrl) {
     this.lraCoordinatorUrl = lraCoordinatorUrl;
+    this.apiClient = new MicroprofileLra(lraCoordinatorUrl);
   }
 
-  start (clientID, endpoints, timeout) {
-    return axios.post(this.lraCoordinatorUrl, {
+  start (clientID, endpoints, timeLimit) {
+    const opts = {
       clientID,
-      headers: constructHeader(endpoints)
-    }).then(response => new Participant(response, clientID, timeout))
-      .catch(console.error); // TODO: More better error handling
+      timeLimit,
+      customHeaders: { Link: constructHeader(endpoints) }
+    };
+
+    return new Promise((resolve, reject) => {
+      this.apiClient.startLRA(opts, (error, result, request, response) => {
+        if (error) return reject(error);
+        const start = response.body.lastIndexOf('/') + 1;
+        const end = response.body.lastIndexOf('"');
+        const lraId = response.body.substring(start, end);
+        return resolve(lraId);
+      });
+    });
+  }
+
+  status (lraId) {
+    return new Promise((resolve, reject) => {
+      this.apiClient.getLRAStatus(lraId, (error, result, request, response) => {
+        if (error) return reject(error);
+        return resolve(response.body);
+      });
+    });
   }
 
   join (lraID, clientID, endpoints, timeout) {
-    return axios.put(this.lraCoordinatorUrl, {
-      clientID,
-      headers: constructHeader(endpoints)
-    }).then(response => new Participant(response, clientID, timeout))
-      .catch(console.error);
+    // return axios.put(this.lraCoordinatorUrl, {
+    //   clientID,
+    //   headers: constructHeader(endpoints)
+    // }).then(response => new Participant(response, clientID, timeout))
+    //   .catch(console.error);
   }
+
+  // status (lraID, )
 }
 
 class Participant {
@@ -73,9 +95,9 @@ CrockPot.Participant = Participant;
 // <http://localhost:8081/complete>; rel="complete"; title="complete URI", \
 // <http://localhost:8081/compensate>; rel="compensate"; title="compensate URI"'
 function constructHeader (endpoints) {
-  return `Link: <${endpoints.leave}>; rel="leave"; title="leave URI", \
-        <${endpoints.complete}>; rel="leave", title="complete URI", \
-        <${endpoints.compensate}>; rel="compensate"; title="compensate URI"`;
+  return `<${endpoints.leave}>; rel="leave"; title="leave URI", \
+<${endpoints.complete}>; rel="complete", title="complete URI", \
+<${endpoints.compensate}>; rel="compensate"; title="compensate URI"`;
 }
 
 module.exports = CrockPot;
