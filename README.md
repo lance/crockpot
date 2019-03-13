@@ -1,6 +1,6 @@
 # Crockpot
 
-A Node.js module for microprofile Long Running Actions.
+A Node.js module for [Microprofile Long Running Actions](https://microprofile.io/project/eclipse/microprofile-lra).
 
 A work in progress.
 
