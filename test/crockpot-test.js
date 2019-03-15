@@ -5,9 +5,10 @@ const crockpot = require('..');
 
 const client = new crockpot('http://localhost:8080');
 const endpoints = {
-  leave: 'http://localhost:3000/leave',
-  complete: 'http://localhost:3000/complete',
-  compensate: 'http://localhost:3000/compensate'
+  leave: 'http://127.0.0.1:3000/leave',
+  complete: 'http://127.0.0.1:3000/complete',
+  compensate: 'http://127.0.0.1:3000/compensate',
+  status: 'http://127.0.0.1:3000/status'
 };
 const timeLimit = 60000;
 
@@ -44,7 +45,7 @@ test('A Participant is returned when an LRA has been started', t => {
       t.ok(participant.id);
       t.end();
     })
-    .catch(t.fail);
+    .catch(t.end);
 });
 
 test('A client can start an LRA transaction and get its status', t => {
@@ -53,11 +54,12 @@ test('A client can start an LRA transaction and get its status', t => {
     .then(participant => {
       client.status(participant.id)
         .then(resp => {
-          t.equal(resp.status, 'Active');
+          t.equal(resp, 'Active');
           t.end();
-        });
+        })
+        .catch(t.end);
     })
-    .catch(t.fail);
+    .catch(t.end);
 });
 
 test('A client can determine if an LRA is active', t => {
@@ -68,8 +70,10 @@ test('A client can determine if an LRA is active', t => {
         .then(resp => {
           t.equal(resp, true);
           t.end();
-        });
-    });
+        })
+        .catch(t.end);
+    })
+    .catch(t.end);
 });
 
 test('A client can cancel an active LRA', t => {
@@ -83,7 +87,24 @@ test('A client can cancel an active LRA', t => {
             .then(resp => {
               t.equal(resp, false);
               t.end();
-            });
-        });
-    });
+            })
+            .catch(t.end);
+        })
+        .catch(t.end);
+    })
+    .catch(t.end);
+});
+
+test('A compensator can join an active LRA', t => {
+  client.start('test-crockpot', timeLimit)
+    .then(participant => {
+      console.log(participant);
+      client.join(participant.id, 'test-crockpot-compensator',
+        endpoints, timeLimit)
+        .then(resp => {
+          t.end();
+        })
+        .catch(t.end);
+    })
+    .catch(t.end);
 });
