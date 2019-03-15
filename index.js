@@ -74,9 +74,6 @@ class CrockPot {
         (error, result, request, response) => {
           if (error) return reject(error);
           if (response.statusCode === 412) return reject(response.body);
-          console.log(response.statusCode);
-          console.log(response.rawHeaders);
-          console.log(response.body);
           return resolve(response.body);
         });
     });
@@ -118,8 +115,9 @@ CrockPot.Participant = Participant;
 // <http://localhost:8081/complete>; rel="complete"; title="complete URI", \
 // <http://localhost:8081/compensate>; rel="compensate"; title="compensate URI"'
 function constructHeader (endpoints) {
-  return `<${endpoints.status}>; rel="status"; title="leave URI", \
-<${endpoints.complete}>; rel="complete", title="complete URI", \
+  return `<${endpoints.status}>; rel="status"; title="status URI", \
+<${endpoints.leave}>; rel="leave"; title="leave URI", \
+<${endpoints.complete}>; rel="complete"; title="complete URI", \
 <${endpoints.compensate}>; rel="compensate"; title="compensate URI"`;
 }
 

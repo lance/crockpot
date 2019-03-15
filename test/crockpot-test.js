@@ -98,7 +98,6 @@ test('A client can cancel an active LRA', t => {
 test('A compensator can join an active LRA', t => {
   client.start('test-crockpot', timeLimit)
     .then(participant => {
-      console.log(participant);
       client.join(participant.id, 'test-crockpot-compensator',
         endpoints, timeLimit)
         .then(resp => {
