@@ -79,3 +79,6 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 .vscode
+
+# Local test detritus
+lra-coordinator.cid

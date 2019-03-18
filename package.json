@@ -7,7 +7,7 @@
     "build": "autorest --input-file=./openapi/swagger.yaml --output-folder=./openapi --namespace=nodeshift --nodejs",
     "lint": "semistandard index.js test/*.js lib/*.js",
     "test": "nyc tape test/*.js | tap-spec",
-    "pretest": "echo 'not linting' # npm run lint",
+    "pretest": "npm run lint && ./test/integration-test-setup.sh",
     "prepublish": "npm audit",
     "release": "standard-version -s"
   },
@@ -18,7 +18,6 @@
     "autorest": "^2.0.4283",
     "eslint": "^5.13.0",
     "expect.js": "^0.3.1",
-    "mocha": "^6.0.2",
     "nyc": "^13.3.0",
     "semistandard": "^13.0.1",
     "sinon": "^7.2.7",
@@ -26,7 +25,6 @@
     "tape": "^4.9.2"
   },
   "dependencies": {
-    "axios": "^0.18.0",
     "ms-rest": "^2.5.0",
     "superagent": "^4.1.0"
   }

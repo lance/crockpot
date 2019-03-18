@@ -6,8 +6,19 @@ A work in progress.
 
 ## Running the tests
 
-You'll need a running Narayana server. This takes some hacking around it seems.
+You need to have docker installed. And some kind of shell at `#!/bin/bash`.
 
-* Clone this project: https://github.com/jboss-dockerfiles/narayana
-* Change to the `lra-coordinator` directory: `cd narayana/lra/lra-coordinator`
-* Run it: `docker run --rm -it -p 8080:8080 lra-coordinator`
+All test are currently integration tests where we are testing against an actual
+Narayana server running the Microprofile API and exposing it via REST.
+
+```
+npm test
+```
+
+This command will ensure that a Narayana server is running as a local Docker
+container with port 8080 exposed.
+
+## Generating the API Client
+
+The Narayana server API may be used to generate an OpenAPI `.json` file. The current
+spec is in the `openapi` directory.
