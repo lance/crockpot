@@ -6,7 +6,7 @@
   "scripts": {
     "build": "autorest --input-file=./openapi/swagger.yaml --output-folder=./openapi --namespace=nodeshift --nodejs",
     "lint": "semistandard index.js test/*.js lib/*.js",
-    "test": "nyc tape test/*.js | tap-spec",
+    "test": "nyc tape test/*.js test/*/*.js test/*/*/*.js | tap-spec",
     "pretest": "npm run lint && ./test/integration-test-setup.sh",
     "prepublish": "npm audit",
     "release": "standard-version -s"

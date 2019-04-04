@@ -11,42 +11,10 @@ test('A client can start an LRA transaction and get its status', t => {
   client.start('test-crockpot-client', timeLimit)
     .then(lra => {
       lra.status().then(resp => {
-        t.equal(resp, 'Active');
+        t.equal(resp.status, 'Active');
         t.end();
       })
         .catch(t.end);
     })
     .catch(t.end);
 });
-
-// test('A client can determine if an LRA is active', t => {
-//   t.plan(1);
-//   client.start('test-crockpot-client', timeLimit)
-//     .then(lra => {
-//       lra.isActive(lra).then(resp => {
-//         t.equal(resp, true);
-//         t.end();
-//       })
-//         .catch(t.end);
-//     })
-//     .catch(t.end);
-// });
-
-// test('A client can cancel an active LRA', t => {
-//   t.plan(2);
-//   client.start('test-crockpot', timeLimit)
-//     .then(lra => {
-//       client.cancel(lra)
-//         .then(resp => {
-//           t.equal(resp, 'Cancelled');
-//           client.isActive(lra)
-//             .then(resp => {
-//               t.equal(resp, false);
-//               t.end();
-//             })
-//             .catch(t.end);
-//         })
-//         .catch(t.end);
-//     })
-//     .catch(t.end);
-// });
